@@ -4,19 +4,25 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                bat 'mvn clean install'
+                dir('Week 3_Junit') {
+                    bat 'mvn clean install'
+                }
             }
         }
 
         stage('Test') {
             steps {
-                bat 'mvn test'
+                dir('Week 3_Junit') {
+                    bat 'mvn test'
+                }
             }
         }
 
         stage('Code Coverage') {
             steps {
-                bat 'mvn jacoco:report'
+                dir('Week 3_Junit') {
+                    bat 'mvn jacoco:report'
+                }
             }
         }
 
