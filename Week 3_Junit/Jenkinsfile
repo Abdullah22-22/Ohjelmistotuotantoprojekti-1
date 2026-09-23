@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        DOCKER_IMAGE = 'abdullah22hel/temperature-converter'
+    }
+
     stages {
         stage('Build') {
             steps {
@@ -35,6 +39,29 @@ pipeline {
         stage('Publish Coverage Report') {
             steps {
                 recordCoverage(tools: [[parser: 'JACOCO']])
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                dir('Week 3_Junit') {
+                    bat "docker build -t %DOCKER_IMAGE%:%BUILD_NUMBER% -t %DOCKER_IMAGE%:latest ."
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-credentials',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
+                    bat "docker login -u %DOCKER_USER% -p %DOCKER_PASS%"
+                    bat "docker push %DOCKER_IMAGE%:%BUILD_NUMBER%"
+                    bat "docker push %DOCKER_IMAGE%:latest"
+                    bat "docker logout"
+                }
             }
         }
     }
