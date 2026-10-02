@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'abdullah22hel/temperature-converter'
+        DOCKER_HOST = 'tcp://localhost:2375'
     }
 
     stages {
